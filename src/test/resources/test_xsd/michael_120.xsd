@@ -1,0 +1,1216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="topology">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="formatVersion" type="Max16Chars" fixed="1.2"/>
+        <xs:element name="version" type="Version"/>
+        <xs:element name="defaultVariant" type="VariantID" minOccurs="0"/>
+        <xs:element name="mapData" type="MapData"/>
+        <xs:element name="controlData" type="ControlData" minOccurs="0"/>
+      </xs:sequence>
+    </xs:complexType>
+
+    <!--  Key fields and refs -->
+    <xs:key name="IntersectionIDKey">
+      <xs:selector xpath="mapData/intersections/intersectionGeometry/id"/>
+      <xs:field xpath="id"/>
+    </xs:key>
+    <xs:keyref name="IntersectionIDKeyRef" refer="IntersectionIDKey">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/intersectionID"/>
+      <xs:field xpath="id"/>
+    </xs:keyref>
+    <xs:key name="VariantIDKey">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/VariantList/Variant"/>
+      <xs:field xpath="variantID"/>
+    </xs:key>
+    <xs:keyref name="VariantIDKeyRef" refer="VariantIDKey">
+      <xs:selector xpath=".//topology"/>
+      <xs:field xpath="defaultVariant"/>
+    </xs:keyref>
+    <xs:key name="SignalGroupIDKey">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroups/sg"/>
+      <xs:field xpath="signalGroup"/>
+    </xs:key>
+    <xs:keyref name="ConnectionSignalGroupKeyRef" refer="SignalGroupIDKey">
+      <xs:selector xpath="mapData/intersections/intersectionGeometry/laneSet/genericLane/connectsTo/connection"/>
+      <xs:field xpath="signalGroup"/>
+    </xs:keyref>
+    <xs:keyref name="FromSignalGroupIDKeyRef" refer="SignalGroupIDKey">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroupRelations/signalGroupRelation"/>
+      <xs:field xpath="fromSignalGroup"/>
+    </xs:keyref>
+    <xs:keyref name="ToSignalGroupIDKeyRef" refer="SignalGroupIDKey">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroupRelations/signalGroupRelation"/>
+      <xs:field xpath="toSignalGroup"/>
+    </xs:keyref>
+
+    <xs:unique name="UniqueRestrictionClassID">
+      <xs:selector xpath="mapData/restrictionList/restrictionClassAssignment"/>
+      <xs:field xpath="id"/>
+    </xs:unique>
+    <xs:unique name="UniqueIntersectionReferenceID">
+      <xs:selector xpath="mapData/intersections/intersectionGeometry/id"/>
+      <xs:field xpath="region"/>
+      <xs:field xpath="id"/>
+    </xs:unique>
+    <xs:unique name="UniqueIntersectionGeometryName">
+      <xs:selector xpath="mapData/intersections/intersectionGeometry"/>
+      <xs:field xpath="name"/>
+    </xs:unique>
+    <xs:unique name="UniqueIntersectionName">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection"/>
+      <xs:field xpath="name"/>
+    </xs:unique>
+    <xs:unique name="UniqueIntersectionDescriptiveName">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection"/>
+      <xs:field xpath="descriptiveName"/>
+    </xs:unique>
+    <xs:unique name="UniqueIntersectionAlias">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueInputName">
+      <xs:selector xpath="controlData/controller/inputs/input"/>
+      <xs:field xpath="ioName"/>
+    </xs:unique>
+    <xs:unique name="UniqueInputAlias">
+      <xs:selector xpath="controlData/controller/inputs/input"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueInputVlogIdx">
+      <xs:selector xpath="controlData/controller/inputs/input"/>
+      <xs:field xpath="vlogIdx"/>
+    </xs:unique>
+    <xs:unique name="UniqueOutputName">
+      <xs:selector xpath="controlData/controller/outputs/output"/>
+      <xs:field xpath="ioName"/>
+    </xs:unique>
+    <xs:unique name="UniqueOutputAlias">
+      <xs:selector xpath="controlData/controller/outputs/output"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueOutputVlogIdx">
+      <xs:selector xpath="controlData/controller/outputs/output"/>
+      <xs:field xpath="vlogIdx"/>
+    </xs:unique>
+    <xs:unique name="UniqueVariantID">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/variants/variant"/>
+      <xs:field xpath="variantID"/>
+    </xs:unique>
+    <xs:unique name="UniqueVariantName">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/variants/variant"/>
+      <xs:field xpath="name"/>
+    </xs:unique>
+    <xs:unique name="UniqueSensorID">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/sensors/sensor"/>
+      <xs:field xpath="sensorID"/>
+    </xs:unique>
+    <xs:unique name="UniqueSensorName">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/sensors/sensor"/>
+      <xs:field xpath="name"/>
+    </xs:unique>
+    <xs:unique name="UniqueSensorAlias">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/sensors/sensor"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueSensorVlogIdx">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/sensors/sensor"/>
+      <xs:field xpath="vlogIdx"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupName">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroups/sg"/>
+      <xs:field xpath="name"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupID">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroups/sg"/>
+      <xs:field xpath="signalGroup"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupAlias">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroups/sg"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupVlogIdx">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroups/sg"/>
+      <xs:field xpath="vlogIdx"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupRelationAlias">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/SignalGroupRelations/signalGroupRelation"/>
+      <xs:field xpath="alias"/>
+    </xs:unique>
+    <xs:unique name="UniqueSignalGroupRelation">
+      <xs:selector xpath="controlData/controlledIntersections/controlledIntersection/signalGroupRelations/signalGroupRelation"/>
+      <xs:field xpath="fromSignalGroup"/>
+      <xs:field xpath="toSignalGroup"/>
+    </xs:unique>
+  </xs:element>
+
+  <xs:complexType name="Version">
+    <xs:sequence>
+      <xs:element name="versionID">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="timestamp" type="xs:dateTime"/>
+      <xs:element name="startDate" type="xs:dateTime"/>
+      <xs:element name="endDate" type="xs:dateTime" minOccurs="0"/>
+      <xs:element name="comment" type="Max1024Chars" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="Max16Chars">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Max255Chars">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Max1024Chars">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+      <xs:maxLength value="1024"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VariantID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="MapData">
+    <xs:sequence>
+      <xs:element name="msgIssueRevision" type="xs:integer" fixed="0"/>
+      <xs:element name="intersections" type="IntersectionGeometryList" minOccurs="0"/>
+      <xs:element name="dataParameters" type="DataParameters"/>
+      <xs:element name="restrictionList" type="RestrictionClassList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IntersectionGeometryList">
+    <xs:sequence>
+      <xs:element name="intersectionGeometry" type="IntersectionGeometry" maxOccurs="32">
+
+        <!--  Key fields and refs -->
+        <xs:key name="LaneIDKey">
+          <xs:selector xpath="laneSet/genericLane"/>
+          <xs:field xpath="laneID"/>
+        </xs:key>
+        <xs:keyref name="ConnectingLaneIDKeyRef" refer="LaneIDKey">
+          <xs:selector xpath="laneSet/genericLane/connectsTo/connection/connectingLane"/>
+          <xs:field xpath="lane"/>
+        </xs:keyref>
+
+	    <!-- Unique fields -->
+        <xs:unique name="UniqueLaneID">
+          <xs:selector xpath="laneSet/genericLane"/>
+          <xs:field xpath="laneID"/>
+        </xs:unique>
+        <xs:unique name="UniqueConnectionID">
+          <xs:selector xpath="laneSet/genericLane/connectsTo/connection"/>
+          <xs:field xpath="connectionID"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IntersectionGeometry">
+    <xs:sequence>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="id" type="IntersectionReferenceID"/>
+      <xs:element name="revision" type="MsgCount"/>
+      <xs:element name="refPoint" type="Position3D"/>
+      <xs:element name="laneWidth">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="32676"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="speedLimits" type="SpeedLimitList"/>
+      <xs:element name="laneSet" type="LaneList"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="DescriptiveName">
+    <xs:restriction base="xs:string"> 
+      <xs:pattern value="[ !-z]{1,63}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="IntersectionReferenceID">
+    <xs:sequence>
+      <xs:element name="region" type="RoadRegulatorID"/>
+      <xs:element name="id" type="IntersectionID"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RoadRegulatorID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="65535"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="IntersectionID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="65535"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="MsgCount">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="127"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Position3D">
+    <xs:sequence>
+      <xs:element name="lat" type="Latitude"/>
+      <xs:element name="long" type="Longitude"/>
+      <xs:element name="altitude" type="Altitude" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="Latitude">
+  	<xs:restriction base="xs:integer">
+  		<xs:minInclusive value="-900000000"></xs:minInclusive>
+  		<xs:maxInclusive value="900000001"></xs:maxInclusive>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Longitude">
+  	<xs:restriction base="xs:integer">
+  		<xs:minInclusive value="-1799999999"></xs:minInclusive>
+  		<xs:maxExclusive value="1800000001"></xs:maxExclusive>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Altitude">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="-100000"/>
+      <xs:maxExclusive value="800001"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SpeedLimitList">
+    <xs:sequence>
+      <xs:element name="regulatorySpeedLimit" type="RegulatorySpeedLimit" maxOccurs="9"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RegulatorySpeedLimit">
+    <xs:sequence>
+      <xs:element name="type" type="SpeedLimitType"/>
+      <xs:element name="speed" type="Velocity"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SpeedLimitType">
+  	<xs:restriction base="xs:string">
+  		<xs:enumeration value="unknown"/>
+  		<xs:enumeration value="maxSpeedInSchoolZone"/>
+  		<xs:enumeration value="maxSpeedInSchoolZoneWhenChildrenArePresent"/>
+  		<xs:enumeration value="maxSpeedInConstructionZone"/>
+  		<xs:enumeration value="vehicleMinSpeed"/>
+  		<xs:enumeration value="vehicleMaxSpeed"/>
+  		<xs:enumeration value="vehicleNightMaxSpeed"/>
+  		<xs:enumeration value="truckMinSpeed"/>
+  		<xs:enumeration value="truckMaxSpeed"/>
+  		<xs:enumeration value="truckNightMaxSpeed"/>
+  		<xs:enumeration value="vehiclesWithTrailersMinSpeed"/>
+  		<xs:enumeration value="vehiclesWithTrailersMaxSpeed"/>
+  		<xs:enumeration value="vehiclesWithTrailersNightMaxSpeed"/>
+  		<xs:enumeration value="nominalSpeed"></xs:enumeration>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="Velocity">
+  	<xs:restriction base="xs:integer">
+  		<xs:minInclusive value="0"/>
+  		<xs:maxInclusive value="8191"/>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="LaneList">
+    <xs:sequence>
+      <xs:element name="genericLane" type="GenericLane" maxOccurs="255">
+
+        <!--  Key fields and refs -->
+        <xs:key name="ConnectionIDKey">
+          <xs:selector xpath="connectsTo/connection"/>
+          <xs:field xpath="connectionID"/>
+        </xs:key>
+        <xs:keyref name="ConnectionIDKeyRef" refer="ConnectionIDKey">
+          <xs:selector xpath="regional/addGrpC"/>
+          <xs:field xpath="connectionID"/>
+        </xs:keyref>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+	  
+  <xs:complexType name="GenericLane">
+    <xs:sequence>
+      <xs:element name="laneID" type="LaneID"/>
+      <xs:element name="name" type="DescriptiveName"/>    
+      <xs:element name="ingressApproach" type="ApproachID" minOccurs="0"/>
+      <xs:element name="egressApproach" type="ApproachID" minOccurs="0"/>
+      <xs:element name="laneAttributes" type="LaneAttributes"/>
+      <xs:element name="nodes" type="NodeSetXY"/>
+      <xs:element name="connectsTo" type="ConnectToList" minOccurs="0"/>
+      <xs:element name="regional" type="REGION.Reg-GenericLane" minOccurs="0"/>      
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="LaneID">
+  	<xs:restriction base="xs:integer">
+  		<xs:minInclusive value="0"/>
+  		<xs:maxInclusive value="255"/>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="ApproachID">
+  	<xs:restriction base="xs:integer">
+  		<xs:minInclusive value="0"/>
+  		<xs:maxInclusive value="15"/>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="LaneAttributes">
+    <xs:sequence>
+      <xs:element name="directionalUse" type="LaneDirection"/>
+      <xs:element name="sharedWith" type="LaneSharing"/>
+      <!--LaneTypeAttributes choice-->
+      <xs:choice>
+        <xs:element name="vehicle" type="LaneTypeAttributes8Bits"/>
+        <xs:element name="crosswalk" type="LaneTypeAttributes16Bits"/>
+        <xs:element name="bikeLane" type="LaneTypeAttributes16Bits"/>
+        <xs:element name="trackedvehicle" type="LaneTypeAttributes16Bits"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="BitString">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[0-1]{0,}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LaneDirection">
+    <xs:restriction base="BitString">
+      <xs:length value="2"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LaneSharing">
+    <xs:restriction base="BitString">
+      <xs:length value="10"/>
+    </xs:restriction>
+  </xs:simpleType>
+    
+  <xs:simpleType name="LaneTypeAttributes8Bits">
+    <xs:restriction base="BitString">
+      <xs:length value="8"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LaneTypeAttributes16Bits">
+    <xs:restriction base="BitString">
+      <xs:length value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="NodeSetXY">
+    <xs:sequence>
+      <xs:element name="nodeXY" type="NodeXY" minOccurs="2" maxOccurs="63"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NodeXY">
+    <xs:sequence>
+      <xs:element name="node-LatLon" type="Node-LLmD-64b"/>
+      <xs:element name="attributes" type="NodeAttributeSetXY" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Node-LLmD-64b">
+  	<xs:sequence>
+  		<xs:element name="lat" type="Latitude"/>
+  		<xs:element name="lon" type="Longitude"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NodeAttributeSetXY">
+    <xs:sequence>
+      <xs:element name="localNode" type="NodeAttributeXYList" minOccurs="0"/>
+      <xs:element name="disabled" type="SegmentAttributesXYList" minOccurs="0"/>
+      <xs:element name="enabled" type="SegmentAttributesXYList" minOccurs="0"/>
+      <xs:element name="data" type="LaneDataAttributeList" minOccurs="0"/>
+      <xs:element name="dWidth" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="-512"/>
+            <xs:maxInclusive value="511"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="dElevation" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="-512"/>
+            <xs:maxInclusive value="511"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="NodeAttributeXYList">
+    <xs:sequence>
+      <xs:element name="nodeAttributeXY" type="NodeAttributeXY" maxOccurs="8"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="NodeAttributeXY">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="reserved"/>
+      <xs:enumeration value="stopLine"/>
+      <xs:enumeration value="roundedCapStyleA"/>
+      <xs:enumeration value="roundedCapStyleB"/>
+      <xs:enumeration value="mergePoint"/>
+      <xs:enumeration value="divergePoint"/>
+      <xs:enumeration value="downstreamStopLine"/>
+      <xs:enumeration value="downstreamStartNode"/>
+      <xs:enumeration value="closedToTraffic"/>
+      <xs:enumeration value="safeIsland"/>
+      <xs:enumeration value="curbPresentAtStepOff"/>
+      <xs:enumeration value="hydrantPresent"/>
+      <xs:enumeration value="yield"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SegmentAttributesXYList">
+    <xs:sequence>
+      <xs:element name="segmentAttributeXY" type="SegmentAttributeXY" maxOccurs="8"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SegmentAttributeXY">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="reserved"/>
+      <xs:enumeration value="doNotBlock"/>
+      <xs:enumeration value="whiteLine"/>
+      <xs:enumeration value="mergingLaneLeft"/>
+      <xs:enumeration value="mergingLaneRight"/>
+      <xs:enumeration value="curbOnLeft"/>
+      <xs:enumeration value="curbOnRight"/>
+      <xs:enumeration value="loadingzoneOnLeft"/>
+      <xs:enumeration value="loadingzoneOnRight"/>
+      <xs:enumeration value="turnOutPointOnLeft"/>
+      <xs:enumeration value="turnOutPointOnRight"/>
+      <xs:enumeration value="adjacentParkingOnLeft"/>
+      <xs:enumeration value="adjacentParkingOnRight"/>
+      <xs:enumeration value="adjacentBikeLaneOnLeft"/>
+      <xs:enumeration value="adjacentBikeLaneOnRight"/>
+      <xs:enumeration value="sharedBikeLane"/>
+      <xs:enumeration value="bikeBoxInFront"/>
+      <xs:enumeration value="transitStopOnLeft"/>
+      <xs:enumeration value="transitStopOnRight"/>
+      <xs:enumeration value="transitStopInLane"/>
+      <xs:enumeration value="sharedWithTrackedVehicle"/>
+      <xs:enumeration value="safeIsland"/>
+      <xs:enumeration value="lowCurbsPresent"/>
+      <xs:enumeration value="rumbleStripPresent"/>
+      <xs:enumeration value="audibleSignalingPresent"/>
+      <xs:enumeration value="adaptiveTimingPresent"/>
+      <xs:enumeration value="rfSignalRequestPresent"/>
+      <xs:enumeration value="partialCurbIntrusion"/>
+      <xs:enumeration value="taperToLeft"/>
+      <xs:enumeration value="taperToRight"/>
+      <xs:enumeration value="taperToCenterLine"/>
+      <xs:enumeration value="parallelParking"/>
+      <xs:enumeration value="headInParking"/>
+      <xs:enumeration value="freeParking"/>
+      <xs:enumeration value="timeRestrictionsOnParking"/>
+      <xs:enumeration value="costToPark"/>
+      <xs:enumeration value="midBlockCurbPresent"/>
+      <xs:enumeration value="unEvenPavementPresent"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="LaneDataAttributeList">
+    <xs:sequence>
+      <xs:element name="laneDataAttribute" type="LaneDataAttribute"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LaneDataAttribute">
+    <xs:sequence>
+      <!--LaneDataAttribute choice-->
+      <xs:choice maxOccurs="8">
+        <xs:element name="speedLimits" type="SpeedLimitList"/>
+        <xs:element name="regional" type="REGION.Reg-LaneDataAttributes"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="REGION.Reg-LaneDataAttributes">
+  	<xs:sequence>
+  		<xs:element name="addGrpC" type="LaneDataAttribute-addGrpC" maxOccurs="4"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LaneDataAttribute-addGrpC">
+  	<xs:sequence>
+      <xs:element name="maxVehicleHeight" type="VehicleHeight" minOccurs="0"/>
+  	  <xs:element name="maxVehicleWeight" type="VehicleMass" minOccurs="0"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="VehicleHeight">
+  	<xs:restriction base="xs:integer">
+  		<xs:maxInclusive value="127"></xs:maxInclusive>
+  		<xs:minExclusive value="0"></xs:minExclusive>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VehicleMass">
+  	<xs:restriction base="xs:integer">
+  		<xs:maxInclusive value="255"></xs:maxInclusive>
+  		<xs:minExclusive value="0"></xs:minExclusive>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ConnectToList">
+    <xs:sequence>
+      <xs:element name="connection" type="Connection" maxOccurs="16"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Connection">
+    <xs:sequence>
+      <xs:element name="connectingLane" type="ConnectingLane"/>
+      <xs:element name="remoteIntersection" type="IntersectionReferenceID" minOccurs="0"/>      
+      <xs:element name="signalGroup" type="SignalGroupID" minOccurs="0"/>  
+      <xs:element name="userClass" type="RestrictionClassID" minOccurs="0"/>  
+      <xs:element name="connectionID" type="LaneConnectionID"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name ="ConnectingLane">
+    <xs:sequence>
+      <xs:element name="lane" type="LaneID"/>
+      <xs:element name="maneuver" type="AllowedManeuvers"/>
+    </xs:sequence>
+  </xs:complexType>      
+
+  <xs:simpleType name="AllowedManeuvers">
+    <xs:restriction base="BitString">
+      <xs:length value="12"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SignalGroupID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="RestrictionClassID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LaneConnectionID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="REGION.Reg-GenericLane">
+  	<xs:sequence>
+  		<xs:element name="addGrpC" type="ConnectionTrajectory-addGrpC" maxOccurs="4"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ConnectionTrajectory-addGrpC">
+  	<xs:sequence>
+  		<xs:element name="nodes" type="NodeSetXY"/>
+  		<xs:element name="connectionID" type="LaneConnectionID"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DataParameters">
+    <xs:sequence>
+      <xs:element name="processAgency" type="Max255Chars"/>
+      <xs:element name="lastCheckedDate" type="Max255Chars"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RestrictionClassList">
+    <xs:sequence>
+      <xs:element name="restrictionClassAssignment" type="RestrictionClassAssignment" maxOccurs="254"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RestrictionClassAssignment">
+    <xs:sequence>
+      <xs:element name="id">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="255"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="users" type="RestrictionUserTypeList"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RestrictionUserTypeList">
+    <xs:sequence>
+      <xs:element name="user" type="RestrictionUserType"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RestrictionUserType">
+    <xs:sequence>
+    <!--RestrictionUserType choice-->
+      <xs:choice maxOccurs="16">
+        <xs:element name="basicType" type="RestrictionAppliesToEnum"/>
+        <xs:element name="regional" type="REGION.Reg-RestrictionUserType"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="RestrictionAppliesToEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="none"/>
+      <xs:enumeration value="equippedTransit"/>
+      <xs:enumeration value="equippedTaxis"/>
+      <xs:enumeration value="equippedOther"/>
+      <xs:enumeration value="emissionCompliant"/>
+      <xs:enumeration value="equippedBicycle"/>
+      <xs:enumeration value="weightCompliant"/>
+      <xs:enumeration value="heightCompliant"/>
+      <xs:enumeration value="pedestrians"/>
+      <xs:enumeration value="slowMovingPersons"/>
+      <xs:enumeration value="wheelchairUsers"/>
+      <xs:enumeration value="visualDisabilities"/>
+      <xs:enumeration value="audioDisabilities"/>
+      <xs:enumeration value="otherUnknownDisabilities"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="REGION.Reg-RestrictionUserType">
+  	<xs:sequence>
+  		<xs:element name="addGrpC" type="RestrictionUserType-addGrpC" maxOccurs="4"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RestrictionUserType-addGrpC">
+  	<xs:sequence>
+  		<xs:element name="emission" type="EmissionType"/>
+  		<xs:element name="fuelType" type="FuelType"/>
+  	</xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="EmissionType">
+    <xs:restriction base="xs:string">
+  		<xs:enumeration value="euro1"></xs:enumeration>
+  		<xs:enumeration value="euro2"></xs:enumeration>
+  		<xs:enumeration value="euro3"></xs:enumeration>
+  		<xs:enumeration value="euro4"></xs:enumeration>
+  		<xs:enumeration value="euro5"></xs:enumeration>
+  		<xs:enumeration value="euro6"></xs:enumeration>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="FuelType">
+    <xs:restriction base="xs:string">
+  		<xs:enumeration value="unknownFuel"></xs:enumeration>
+  		<xs:enumeration value="gasoline"></xs:enumeration>
+  		<xs:enumeration value="ethanol"></xs:enumeration>
+  		<xs:enumeration value="diesel"></xs:enumeration>
+  		<xs:enumeration value="electric"></xs:enumeration>
+  		<xs:enumeration value="hybrid"></xs:enumeration>
+  		<xs:enumeration value="hydrogen"></xs:enumeration>
+  		<xs:enumeration value="natGasLiquid"></xs:enumeration>
+  		<xs:enumeration value="natGasComp"></xs:enumeration>
+  		<xs:enumeration value="propane"></xs:enumeration>
+  	</xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ControlData">
+    <xs:sequence>
+      <xs:element name="controller" type="TLC" minOccurs="0"/>
+      <xs:element name="controlledIntersections" type="IntersectionGeometryAddList"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TLC">
+    <xs:sequence>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="descriptiveName" type="DescriptiveName"/>
+      <xs:element name="uniqueID" type="GUID" minOccurs="0"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="tlcIdentifier" type="TlcIdentifier"/>
+      <xs:element name="vlogID" type="VlogID" minOccurs="0"/>
+      <xs:element name="brand" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="tlcType" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="serialNumber" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="tlcPosition" type="Position3D" minOccurs="0"/>
+      <xs:element name="inputs" type="InputList" minOccurs="0"/>
+      <xs:element name="outputs" type="OutputList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="GUID">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="TlcIdentifier">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[a-fA-F0-9]{8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VlogID">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[ !-z]{1,20}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="InputList">
+    <xs:sequence>
+      <xs:element name="input" type="VlogIO" minOccurs="0" maxOccurs="1024"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OutputList">
+    <xs:sequence>
+      <xs:element name="output" type="VlogIO" minOccurs="0" maxOccurs="1024"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VlogIO">
+    <xs:sequence>
+      <xs:element name="ioName" type="DescriptiveName"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="ioType" type="IOType"/>
+      <xs:element name="vlogIdx" type="VlogIdxMax1023"/>
+      <xs:element name="comment" type="Max255Chars" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="IOType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="boolean"/>
+      <xs:enumeration value="16bit"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="VlogIdxMax1023">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="1023"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="IntersectionGeometryAddList">
+    <xs:sequence>
+      <xs:element name="controlledIntersection" type="IntersectionGeometryAdd" maxOccurs="32"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IntersectionGeometryAdd">
+    <xs:sequence>
+      <xs:element name="intersectionID" type="IntersectionReferenceID"/>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="descriptiveName" type="DescriptiveName"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="intersectionType" type="IntersectionType" minOccurs="0"/>
+      <xs:element name="approaches" type="ApproachList">
+
+	    <!-- Unique fields -->
+        <xs:unique name="UniqueApproachID">
+          <xs:selector xpath="approach"/>
+          <xs:field xpath="approachID"/>
+        </xs:unique>
+        <xs:unique name="UniqueApproachAlias">
+          <xs:selector xpath="approach"/>
+          <xs:field xpath="alias"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="variants" type="VariantList" minOccurs="0"/>
+      <xs:element name="sensors" type="SensorList" minOccurs="0"/>
+      <xs:element name="signalGroups" type="SignalGroupList" minOccurs="0"/>
+      <xs:element name="signalGroupRelations" type="SignalGroupRelationList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="IntersectionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="intersection"/>
+      <xs:enumeration value="roundabout"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="ApproachList">
+    <xs:sequence>
+      <xs:element name="approach" type="Approach" maxOccurs="32"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name ="Approach">
+    <xs:sequence>
+      <xs:element name="approachID" type="ApproachID"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="approachLanes" type="LaneReferenceList" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LaneReferenceList">
+    <xs:sequence>
+      <xs:element name="approachLane" type="ApproachLane" maxOccurs="254"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ApproachLane">
+    <xs:sequence>
+      <xs:element name="lanePosition" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="255"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="laneID" type="LaneID"/>
+      <xs:element name="capacity" minOccurs="0">
+        <xs:simpleType>
+        	<xs:restriction base="xs:integer">
+        		<xs:minInclusive value="0"/>
+        		<xs:maxInclusive value="65535"/>
+        	</xs:restriction>
+        </xs:simpleType>
+      </xs:element>      
+      <xs:element name="length" minOccurs="0">
+        <xs:simpleType>
+        	<xs:restriction base="xs:integer">
+        		<xs:minInclusive value="0"/>
+        		<xs:maxInclusive value="65535"/>
+        	</xs:restriction>
+        </xs:simpleType>
+      </xs:element>      
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VariantList">
+    <xs:sequence>
+      <xs:element name="variant" type="Variant" maxOccurs="16"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Variant">
+    <xs:sequence>
+      <xs:element name="variantID" type="VariantID"/>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="variantCategory" type="VariantCategory"/>
+      <xs:element name="enabledLanes" type="EnabledLaneList"/>
+      <xs:element name="vlogIndicator" type="VlogIndicator" minOccurs="0"/>
+      <xs:element name="activePeriods" type="ActivePeriodList" minOccurs="0"/>
+      <xs:element name="comment" type="Max255Chars" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="VariantCategory">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="normalOperation"/>
+      <xs:enumeration value="congestion"/>
+      <xs:enumeration value="incident"/>
+      <xs:enumeration value="emergency"/>
+      <xs:enumeration value="event"/>
+      <xs:enumeration value="environmental"/>
+      <xs:enumeration value="temporarilyClosed"/>
+      <xs:enumeration value="closed"/>
+      <xs:enumeration value="roadWork"/>
+      <xs:enumeration value="extremeWeatherCondition"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="EnabledLaneList">
+    <xs:sequence>
+      <xs:element name="laneID" type="LaneID" maxOccurs="254"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="VlogIndicator">
+    <xs:sequence>
+      <xs:element name="vlogCat" type="VlogCat"/>
+      <xs:element name="vlogIdx" type="VlogIdxMax1023"/>
+      <xs:element name="matchValue">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="VlogCat">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="DP"/>
+      <xs:enumeration value="IS"/>
+      <xs:enumeration value="FC"/>
+      <xs:enumeration value="US"/>
+      <xs:enumeration value="DS"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ActivePeriodList">
+    <xs:sequence>
+      <xs:element name="activePeriod" type="ActivePeriod" maxOccurs="16"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ActivePeriod">
+    <xs:sequence>
+      <xs:element name="days">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <!-- Day of week: 1=monday, 7=sunday-->
+            <xs:minInclusive value="1"/>
+            <xs:maxInclusive value="7"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="beginTime" type="xs:time"/>
+      <xs:element name="endTime" type="xs:time"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorList">
+    <xs:sequence>
+      <xs:element name="sensor" type="Sensor" maxOccurs="4096"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Sensor">
+    <xs:sequence>
+      <xs:element name="sensorID" type="SensorID"/>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="sensorDeviceType" type="SensorDeviceType"/>
+      <xs:element name="sensorOutput" type="SensorOutput"/>
+      <xs:element name="vlogIdx" type="VlogIdxMax1023" minOccurs="0"/>
+      <xs:element name="sensorPosition" type="Position"/>
+      <xs:element name="length" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="width" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="geoShape" type="GeoShape" minOccurs="0"/>
+      <xs:element name="sensorAllocations" type="SensorAllocationList" minOccurs="0"/>
+      <xs:element name="sensorRelations" type="SensorRelationList" minOccurs="0"/>
+      <xs:element name="gapTime" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9999"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="occupationTime" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9999"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SensorID">
+    <xs:restriction base ="xs:integer">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="255"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SensorDeviceType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="unknown"/>
+      <xs:enumeration value="inductionLoop"/>
+      <xs:enumeration value="communicationLoop"/>
+      <xs:enumeration value="pushButton"/>
+      <xs:enumeration value="camera"/>
+      <xs:enumeration value="radar"/>
+      <xs:enumeration value="motionDetector"/>
+      <xs:enumeration value="pressureSensor"/>
+      <xs:enumeration value="infrared"/>
+      <xs:enumeration value="radio"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="SensorOutput">
+    <xs:restriction base="BitString">
+      <xs:length value="6"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="Position">
+    <xs:sequence>
+      <xs:element name="lat" type="Latitude"/>
+      <xs:element name="long" type="Longitude"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="GeoShape">
+    <xs:sequence>
+      <xs:element name="indexPoint" type="IndexedPosition" minOccurs="3" maxOccurs="63"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IndexedPosition">
+    <xs:sequence>
+      <xs:element name="index">
+        <xs:simpleType>
+          <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="62"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="lat" type="Latitude"/>
+      <xs:element name="long" type="Longitude"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorAllocationList">
+    <xs:sequence>
+      <xs:element name="sensorAllocation" type="SensorAllocation" maxOccurs="255"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorAllocation">
+    <xs:sequence>
+      <xs:element name="laneID" type="LaneID"/>
+      <xs:element name="distance" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="65535"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorRelationList">
+    <xs:sequence>
+      <xs:element name="sensorRelation" type="SensorRelation" maxOccurs="255"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SensorRelation">
+    <xs:sequence>
+      <xs:element name="laneID" type="LaneID"/>
+      <xs:element name="purpose" type="SensorPurpose" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="SensorPurpose">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="measure"/>
+      <xs:enumeration value="verification"/>
+      <xs:enumeration value="gapMeasure"/>
+      <xs:enumeration value="gapVerification"/>
+      <xs:enumeration value="safety"/>
+      <xs:enumeration value="congestion"/>
+      <xs:enumeration value="platoon"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="SignalGroupList">
+    <xs:sequence>
+      <xs:element name="sg" type="SignalGroup" maxOccurs="256"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignalGroup">
+    <xs:sequence>
+      <xs:element name="name" type="DescriptiveName"/>
+      <xs:element name="signalGroup" type="SignalGroupID"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="vlogIdx" type="VlogIdxMax1023"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignalGroupRelationList">
+    <xs:sequence>
+      <xs:element name="signalGroupRelation" type="SignalGroupRelation" maxOccurs="65535"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SignalGroupRelation">
+    <xs:sequence>
+      <xs:element name="fromSignalGroup" type="SignalGroupID"/>
+      <xs:element name="toSignalGroup" type="SignalGroupID"/>
+      <xs:element name="alias" type="Max255Chars" minOccurs="0"/>
+      <xs:element name="clearanceTimeType" type="ClearanceTimeType" minOccurs="0"/>
+      <xs:element name="clearanceTime" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base ="xs:integer">
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="9999"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="ClearanceTimeType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="protectedByClearance"/>
+      <xs:enumeration value="protectedByIntergreen"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

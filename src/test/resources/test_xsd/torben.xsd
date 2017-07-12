@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://evergreen" xmlns="http://evergreen" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="stdCollection" type="stdCollectionType">
+		<xs:annotation>
+			<xs:documentation>Signal Timing Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="geoCollection" type="geoCollectionType">
+		<xs:annotation>
+			<xs:documentation>Geometry Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="locCollection" type="locCollectionType">
+		<xs:annotation>
+			<xs:documentation>Location Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="cycCollection" type="cycCollectionType">
+		<xs:annotation>
+			<xs:documentation>Timing Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="detCollection" type="detCollectionType">
+		<xs:annotation>
+			<xs:documentation>Detector Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="timCollection" type="timCollectionType">
+		<xs:annotation>
+			<xs:documentation>Current Timing Plan Data</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="cn" type="cnResponseType">
+		<xs:annotation>
+			<xs:documentation>Command Response</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<!---->
+	<!--================ -->
+	<!--Basic Types -->
+	<!--================ -->
+	<xs:simpleType name="IdType">
+		<xs:annotation>
+			<xs:documentation>id string</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="VersType">
+		<xs:annotation>
+			<xs:documentation>version string</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="NameType">
+		<xs:annotation>
+			<xs:documentation>name</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="StateType">
+		<xs:annotation>
+			<xs:documentation>state info</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ok"/>
+			<xs:enumeration value="fail"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DirectionEnum">
+		<xs:annotation>
+			<xs:documentation>directions</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="North"/>
+			<xs:enumeration value="South"/>
+			<xs:enumeration value="East"/>
+			<xs:enumeration value="West"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="ValueType">
+		<xs:annotation>
+			<xs:documentation>integer value</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:integer"/>
+	</xs:simpleType>
+	<xs:simpleType name="StampType">
+		<xs:annotation>
+			<xs:documentation>time stamp</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:unsignedInt"/>
+	</xs:simpleType>
+	<xs:simpleType name="FileStateType">
+		<xs:annotation>
+			<xs:documentation>file state info: ok/none</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ok"/>
+			<xs:enumeration value="none"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PathType">
+		<xs:annotation>
+			<xs:documentation>path string</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="PhaseDispType">
+		<xs:annotation>
+			<xs:documentation>string</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NS W"/>
+			<xs:enumeration value="EW W"/>
+			<xs:enumeration value="EW L"/>
+			<xs:enumeration value="NS L"/>
+			<xs:enumeration value="SB L"/>
+			<xs:enumeration value="NS E"/>
+			<xs:enumeration value="EB L"/>
+			<xs:enumeration value="WB B"/>
+			<xs:enumeration value="WB L"/>
+			<xs:enumeration value="NB W"/>
+			<xs:enumeration value="NB L"/>
+			<xs:enumeration value="SB G"/>
+			<xs:enumeration value="WB G"/>
+			<xs:enumeration value="EW G"/>
+			<xs:enumeration value="EB W"/>
+			<xs:enumeration value="SB W"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MovementDirType">
+		<xs:annotation>
+			<xs:documentation>direction string: LT/ST/RT</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LT"/>
+			<xs:enumeration value="ST"/>
+			<xs:enumeration value="RT"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MovementOverlapType">
+		<xs:annotation>
+			<xs:documentation>overlap string: labelled from A to H </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="A"/>
+			<xs:enumeration value="B"/>
+			<xs:enumeration value="C"/>
+			<xs:enumeration value="D"/>
+			<xs:enumeration value="E"/>
+			<xs:enumeration value="F"/>
+			<xs:enumeration value="G"/>
+			<xs:enumeration value="H"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="MovementDisplayType">
+		<xs:annotation>
+			<xs:documentation>display string: ball/arrow/stdleft</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ball"/>
+			<xs:enumeration value="arrow"/>
+			<xs:enumeration value="stdleft"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="DetectorModeType">
+		<xs:annotation>
+			<xs:documentation>detector mode string: LT*ST/ST/ST-RT/RT/LT*/LT-RT/LT+ST/LT/XP/LT+</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LT*ST"/>
+			<xs:enumeration value="ST"/>
+			<xs:enumeration value="ST-RT"/>
+			<xs:enumeration value="RT"/>
+			<xs:enumeration value="LT*"/>
+			<xs:enumeration value="LT-RT"/>
+			<xs:enumeration value="LT+ST"/>
+			<xs:enumeration value="LT"/>
+			<xs:enumeration value="XP"/>
+			<xs:enumeration value="LT+"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="PercentType">
+		<xs:annotation>
+			<xs:documentation>percent</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:unsignedShort">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="SysType">
+		<xs:annotation>
+			<xs:documentation>sys string: tt/trafia</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="TimingNowType">
+		<xs:annotation>
+			<xs:documentation>timing now string: tbc/standby/flash/pattern/plan/fail/unknown</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="tbc"/>
+			<xs:enumeration value="standby"/>
+			<xs:enumeration value="flash"/>
+			<xs:enumeration value="pattern"/>
+			<xs:enumeration value="plan"/>
+			<xs:enumeration value="fail"/>
+			<xs:enumeration value="unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimingOpType">
+		<xs:annotation>
+			<xs:documentation>timing op string: pickup/offset/ncs/transition</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="pickup"/>
+			<xs:enumeration value="offset"/>
+			<xs:enumeration value="ncs"/>
+			<xs:enumeration value="transition"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimingFailType">
+		<xs:annotation>
+			<xs:documentation>timing fail string: cdi/conflict/pre-empt/reset/unknown</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="cdi"/>
+			<xs:enumeration value="conflict"/>
+			<xs:enumeration value="pre-empt"/>
+			<xs:enumeration value="reset"/>
+			<xs:enumeration value="unknown"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimingCategoryType">
+		<xs:annotation>
+			<xs:documentation>timing category string: plan/pattern/standby</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="plan"/>
+			<xs:enumeration value="pattern"/>
+			<xs:enumeration value="standby"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TimingModeType">
+		<xs:annotation>
+			<xs:documentation>timing mode string: free/flash</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="free"/>
+			<xs:enumeration value="flash"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<!---->
+	<!--================ -->
+	<!--Type Definitions -->
+	<!--================ -->
+	<!--= Signal Timing Data-->
+	<xs:complexType name="stdCollectionType">
+		<xs:sequence>
+			<xs:element name="signalTimingData" type="signalTimingDataType"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="signalTimingDataType">
+		<xs:sequence>
+			<xs:element name="std" maxOccurs="unbounded">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="stdType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="numsys" type="ValueType"/>
+	</xs:complexType>
+	<xs:complexType name="stdType">
+		<xs:annotation>
+			<xs:documentation>Signal Timing Data</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="timingPlans" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="timingPlan" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:complexContent>
+									<xs:extension base="timingPlanType"/>
+								</xs:complexContent>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>intersection number </xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="file" type="FileStateType"/>
+		<xs:attribute name="path" type="PathType"/>
+		<xs:attribute name="name" type="NameType">
+			<xs:annotation>
+				<xs:documentation>text name of the intersection</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="timingPlanType">
+		<xs:annotation>
+			<xs:documentation>timing plan</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="phases" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="phase" type="phaseType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation> timing plan number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="cycle" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>cycle length</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="min" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>minimum cycle length for this timing plan</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="offset" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>offset of the cycle, if not present then non-coordinated mode</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="sigplan" type="ValueType"/>
+	</xs:complexType>
+	<xs:complexType name="phaseType">
+		<xs:annotation>
+			<xs:documentation>phase</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="id" type="IdType" use="required">
+					<xs:annotation>
+						<xs:documentation>phase identification </xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="serves" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>the movements this phase serves</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="rof" type="ValueType"/>
+				<xs:attribute name="split" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>the total split, including clearance of this phase</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="disp" type="PhaseDispType"/>
+				<xs:attribute name="minvar" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>minimum green time of the variable interval</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="variable" type="ValueType"/>
+				<xs:attribute name="clear" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>intergreen clearance time</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="fixed" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>fixed time associated with the phase</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!--= Geometry Data-->
+	<xs:complexType name="geoCollectionType">
+		<xs:sequence>
+			<xs:element name="geometries" type="geometriesType"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="geometriesType">
+		<xs:sequence>
+			<xs:element name="geometry" type="geometryType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="path" type="PathType"/>
+	</xs:complexType>
+	<xs:complexType name="geometryType">
+		<xs:annotation>
+			<xs:documentation>Geometry</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="directions" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="direction" type="directionType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>intersection number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="file" type="FileStateType"/>
+		<xs:attribute name="path" type="PathType"/>
+	</xs:complexType>
+	<xs:complexType name="directionType">
+		<xs:annotation>
+			<xs:documentation>Direction</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="movements" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="movement" type="movementType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>number of direction</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="bound" type="DirectionEnum">
+			<xs:annotation>
+				<xs:documentation>direction of traffic on this link</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="exitlanes" type="ValueType"/>
+		<xs:attribute name="speed" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>speed of the link</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="next" type="IdType">
+			<xs:annotation>
+				<xs:documentation>next intersection</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="distance" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>distance</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="name" type="NameType">
+			<xs:annotation>
+				<xs:documentation>name of the link</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="movementType">
+		<xs:annotation>
+			<xs:documentation>Movement</xs:documentation>
+		</xs:annotation>
+		<xs:simpleContent>
+			<xs:extension base="xs:string">
+				<xs:attribute name="dir" type="MovementDirType"/>
+				<xs:attribute name="lanes" type="ValueType">
+					<xs:annotation>
+						<xs:documentation>number of lanes</xs:documentation>
+					</xs:annotation>
+				</xs:attribute>
+				<xs:attribute name="faze" type="ValueType"/>
+				<xs:attribute name="overlap" type="MovementOverlapType"/>
+				<xs:attribute name="perm" type="ValueType"/>
+				<xs:attribute name="display" type="MovementDisplayType"/>
+			</xs:extension>
+		</xs:simpleContent>
+	</xs:complexType>
+	<!--= Location Data-->
+	<xs:complexType name="locCollectionType">
+		<xs:sequence>
+			<xs:element name="locations" type="locationsType"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="locationsType">
+		<xs:sequence>
+			<xs:element name="location" type="locationType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="numsys" type="ValueType"/>
+	</xs:complexType>
+	<xs:complexType name="locationType">
+		<xs:annotation>
+			<xs:documentation>Location</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="detectors" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="detector" type="detectorType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required"/>
+		<xs:attribute name="file" type="FileStateType"/>
+		<xs:attribute name="path" type="PathType"/>
+	</xs:complexType>
+	<xs:complexType name="detectorType">
+		<xs:annotation>
+			<xs:documentation>Detector</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="id" type="IdType" use="required"/>
+		<xs:attribute name="code" type="ValueType"/>
+		<xs:attribute name="faze" type="ValueType"/>
+		<xs:attribute name="lane" type="ValueType"/>
+		<xs:attribute name="mode" type="DetectorModeType"/>
+	</xs:complexType>
+	<!--= Timing Data-->
+	<xs:complexType name="cycCollectionType">
+		<xs:sequence>
+			<xs:element name="cycles" type="cyclesType"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="cyclesType">
+		<xs:sequence>
+			<xs:element name="cycle" type="cycleType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="period" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>300 seconds of data</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="numsys" type="ValueType"/>
+	</xs:complexType>
+	<xs:complexType name="cycleType">
+		<xs:annotation>
+			<xs:documentation>Cycle</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="greens" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="green" type="greenType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>intersection id</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="num" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of cycles in the last period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="cyc" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>cycle counter, starts at 0 at the top of cycle</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="valid" type="PercentType">
+			<xs:annotation>
+				<xs:documentation>the communications to the controller</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="err" type="PercentType">
+			<xs:annotation>
+				<xs:documentation>was the timing plan operating in error</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="trans" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of transitions in the period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="offcor" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of offset corrections in the period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="now" type="StampType">
+			<xs:annotation>
+				<xs:documentation>32 bit time stamp representing the system time</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="std" type="StampType">
+			<xs:annotation>
+				<xs:documentation>32 bit time stamp representing when new static timing was loaded</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="geo" type="StampType">
+			<xs:annotation>
+				<xs:documentation>32 bit time stamp representing when new geometry data was loaded</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="node" type="ValueType"/>
+		<xs:attribute name="send" type="StateType"/>
+		<xs:attribute name="errno" type="ValueType"/>
+		<xs:attribute name="sys" type="SysType"/>
+	</xs:complexType>
+	<xs:complexType name="greenType">
+		<xs:annotation>
+			<xs:documentation>Green</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>phase</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="grn" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>total green time for last period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="ped" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>total ped time (walk + clearance) for last period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="tim" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>fixed time phase, number of times serviced</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="gap" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of times the phase gapped out early</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="max" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of times the phase maxed out</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="fo" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of times the phase was forced off at split maximum</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!--= Detector Data-->
+	<xs:complexType name="detCollectionType">
+		<xs:sequence>
+			<xs:element name="sums">
+				<xs:complexType>
+					<xs:complexContent>
+						<xs:extension base="sumsType"/>
+					</xs:complexContent>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="sumsType">
+		<xs:sequence>
+			<xs:element name="detection" type="detectionType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="period" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>Number of seconds in the summation period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="numsys" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>Number of system nodes (diagnostic)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="detectionType">
+		<xs:annotation>
+			<xs:documentation>Detection</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="dets" minOccurs="0">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="det" type="detType" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>controller number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="now" type="StampType">
+			<xs:annotation>
+				<xs:documentation>32 bit timestamp representing the end of the period</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="comm" type="StateType">
+			<xs:annotation>
+				<xs:documentation>OK or fail (communications status to controller)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="num" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>number of detectors at this controller</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="detType">
+		<xs:annotation>
+			<xs:documentation>Detector</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="id" type="IdType" use="required">
+			<xs:annotation>
+				<xs:documentation>detector number</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="pos" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>system communication comm position (diagnostic)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="vol" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>last period volume</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="occ" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>last period occupancy</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="grn" type="ValueType">
+			<xs:annotation>
+				<xs:documentation>last period volume during associated green</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!--= Current Timing Plan Data-->
+	<xs:complexType name="timCollectionType">
+		<xs:sequence>
+			<xs:element name="timings" type="timingsType"/>
+		</xs:sequence>
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+	<xs:complexType name="timingsType">
+		<xs:sequence>
+			<xs:element name="timing" type="timingType" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="numsys" type="ValueType"/>
+	</xs:complexType>
+	<xs:complexType name="timingType">
+		<xs:annotation>
+			<xs:documentation>Current Timing Plan</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="curPlan" type="timingPlanType"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="ValueType"/>
+		<xs:attribute name="adaptive" type="TimingCategoryType"/>
+		<xs:attribute name="adaPlan" type="ValueType"/>
+		<xs:attribute name="adaMode" type="TimingModeType"/>
+		<xs:attribute name="adaPattern" type="ValueType"/>
+		<xs:attribute name="tod" type="TimingCategoryType"/>
+		<xs:attribute name="todPlan" type="ValueType"/>
+		<xs:attribute name="todMode" type="TimingModeType"/>
+		<xs:attribute name="todPattern" type="ValueType"/>
+		<xs:attribute name="todnum" type="ValueType"/>
+		<xs:attribute name="override" type="TimingCategoryType"/>
+		<xs:attribute name="ovrPlan" type="ValueType"/>
+		<xs:attribute name="ovrMode" type="TimingModeType"/>
+		<xs:attribute name="ovrPattern" type="ValueType"/>
+		<xs:attribute name="now" type="TimingNowType"/>
+		<xs:attribute name="op" type="TimingOpType"/>
+		<xs:attribute name="to" type="ValueType"/>
+		<xs:attribute name="fail" type="TimingFailType"/>
+	</xs:complexType>
+	<!--= Command Response-->
+	<xs:complexType name="cnResponseType">
+		<xs:attribute name="version" type="VersType"/>
+	</xs:complexType>
+</xs:schema>

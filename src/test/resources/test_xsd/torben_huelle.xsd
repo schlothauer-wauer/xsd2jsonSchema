@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://evergreen" xmlns="http://evergreen"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:import></xs:import>
+	<xs:include schemaLocation="torben.xsd"></xs:include>
+	<xs:element name="container">
+		<xs:annotation>
+			<xs:documentation>Command Response</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+      <xs:sequence>
+		<xs:element name="stdCollection" type="stdCollectionType">
+			<xs:annotation>
+				<xs:documentation>Signal Timing Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="geoCollection" type="geoCollectionType">
+			<xs:annotation>
+				<xs:documentation>Geometry Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="locCollection" type="locCollectionType">
+			<xs:annotation>
+				<xs:documentation>Location Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="cycCollection" type="cycCollectionType">
+			<xs:annotation>
+				<xs:documentation>Timing Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="detCollection" type="detCollectionType">
+			<xs:annotation>
+				<xs:documentation>Detector Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="timCollection" type="timCollectionType">
+			<xs:annotation>
+				<xs:documentation>Current Timing Plan Data</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+		<xs:element name="cn" type="cnResponseType">
+			<xs:annotation>
+				<xs:documentation>Command Response</xs:documentation>
+			</xs:annotation>
+		</xs:element>
+      </xs:sequence>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
