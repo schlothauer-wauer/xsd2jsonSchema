@@ -17,7 +17,7 @@ class Test_Xsd2JsonSchema {
     void generateJavaClassesFromXsd() {
         Xsd2JsonSchema inst = new Xsd2JsonSchema();
         inst.model = 'src/test/resources/test_xsd/michael_120.xsd'
-        inst.outputName = 'tmp/michael_120_1.json'
+        inst.outputFilePath = 'tmp/michael_120_1.json'
         def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
         def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
         assertTrue(new File("${pathToGeneratedJavaFiles}/ActivePeriod.java").exists())
@@ -103,7 +103,7 @@ class Test_Xsd2JsonSchema {
     void compileGeneratedJavaClasses() {
         Xsd2JsonSchema inst = new Xsd2JsonSchema();
         inst.model = 'src/test/resources/test_xsd/michael_120.xsd'
-        inst.outputName = 'tmp/michael_120_1.json'
+        inst.outputFilePath = 'tmp/michael_120_1.json'
         def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
         def javacCommandString = Xsd2JsonSchema.getJavacCommandString()
         def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
@@ -191,7 +191,7 @@ class Test_Xsd2JsonSchema {
     void classLoaderTest() {
         Xsd2JsonSchema inst = new Xsd2JsonSchema();
         inst.model = 'src/test/resources/test_xsd/michael_120.xsd'
-        inst.outputName = 'tmp/michael_120_1.json'
+        inst.outputFilePath = 'tmp/michael_120_1.json'
         def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
         def javacCommandString = Xsd2JsonSchema.getJavacCommandString()
         def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
@@ -242,7 +242,7 @@ class Test_Xsd2JsonSchema {
     void testTorben() {
         Xsd2JsonSchema inst = new Xsd2JsonSchema();
         inst.model = 'src/test/resources/test_xsd/torben.xsd'
-        inst.outputName = 'tmp/torben.json'
+        inst.outputFilePath = 'tmp/torben.json'
         def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
         def javacCommandString = Xsd2JsonSchema.getJavacCommandString()
         def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
@@ -263,7 +263,7 @@ class Test_Xsd2JsonSchema {
     void testTorben2() {
         Xsd2JsonSchema inst = new Xsd2JsonSchema();
         inst.model = 'src/test/resources/test_xsd/torben_huelle.xsd'
-        inst.outputName = 'tmp/torben_huelle.json'
+        inst.outputFilePath = 'tmp/torben_huelle.json'
         def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
         def javacCommandString = Xsd2JsonSchema.getJavacCommandString()
         def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
@@ -272,4 +272,19 @@ class Test_Xsd2JsonSchema {
         classLoader.addClasspath(generatedClassPath)
         classToSchema(classLoader,'Container')
     }
+
+    @Test
+    void testFlorian() {
+        Xsd2JsonSchema inst = new Xsd2JsonSchema();
+        inst.model = 'src/test/resources/test_xsd/florian.xsd'
+        inst.outputFilePath = 'tmp/florian.json'
+        def xjcCommandString = Xsd2JsonSchema.getXjcCommandString()
+        def javacCommandString = Xsd2JsonSchema.getJavacCommandString()
+        def pathToGeneratedJavaFiles = inst.generateJavaClassesFromXsd(xjcCommandString)
+        def generatedClassPath = inst.compileGenerated(pathToGeneratedJavaFiles,javacCommandString)
+        final GroovyClassLoader classLoader = new GroovyClassLoader()
+        classLoader.addClasspath(generatedClassPath)
+        classToSchema(classLoader,'Device')
+    }
+
 }

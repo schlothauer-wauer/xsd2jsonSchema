@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:scsbase="http://www.swarco.com/scs/base/1.1.0" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.swarco.com/scs/base/1.1.0">
+  <xsd:simpleType name="DeviceType">
+    <xsd:annotation>
+      <xsd:documentation>Enumeration of supported device types</xsd:documentation>
+    </xsd:annotation>
+    <xsd:restriction base="xsd:NCName">
+      <xsd:enumeration value="OTHER"/>
+      <xsd:enumeration value="TRAFFIC_LIGHT_CONTROLLER"/>
+      <xsd:enumeration value="VARIABLE_MESSAGE_SIGN"/>
+      <xsd:enumeration value="PARKING_HOUSE"/>
+      <xsd:enumeration value="STREETLIGHT_AREA"/>
+      <xsd:enumeration value="DETECTOR"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+  <xsd:complexType name="Device">
+    <xsd:annotation>
+      <xsd:documentation>An abstract representation of a device</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="locations" type="scsbase:Location">
+        <xsd:annotation>
+          <xsd:documentation>List of locations. There are a few specialized locations like NetworkLocation -&gt; IP address, LocationPoint -&gt; geospatial address</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="1" minOccurs="1" name="configuration" type="scsbase:DeviceConfigurationArchive">
+        <xsd:annotation>
+          <xsd:documentation>Reference to a device configuration</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="status" type="scsbase:DeviceStatus">
+        <xsd:annotation>
+          <xsd:documentation>A list of status objects for the device</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element maxOccurs="1" minOccurs="1" name="deviceInfo" type="scsbase:DeviceInfo">
+        <xsd:annotation>
+          <xsd:documentation>Reference to an info-object that hold vendor specific information</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+    <xsd:attribute name="guid" type="xsd:string" use="required">
+      <xsd:annotation>
+        <xsd:documentation>The guid is a primary key of the device. </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="uri" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>An URI to locate this device in an infrastructure. This can be a connection URL or another path </xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:element name="Device" type="scsbase:Device">
+    <xsd:annotation>
+      <xsd:documentation>An abstract representation of a device</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="DeviceConfiguration">
+    <xsd:annotation>
+      <xsd:documentation>An abstract representation of a configuration of the device</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="version" type="xsd:int">
+      <xsd:annotation>
+        <xsd:documentation>The version of the configuration</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="timestamp" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>The timestamp from that this configuration is valid</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+    <xsd:attribute name="id" type="xsd:string" use="required"/>
+    <xsd:attribute name="capabilities" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>Certain features or tags this device supports, like supported protocols (OCIT, ACTROS.connect)</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:element name="DeviceConfiguration" type="scsbase:DeviceConfiguration">
+    <xsd:annotation>
+      <xsd:documentation>An abstract representation of a configuration of the device</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType abstract="true" name="Location">
+    <xsd:annotation>
+      <xsd:documentation>Abstract location object</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="id" type="xsd:string">
+      <xsd:annotation>
+        <xsd:documentation>The id of the location</xsd:documentation>
+      </xsd:annotation>
+    </xsd:attribute>
+  </xsd:complexType>
+  <xsd:complexType name="LocationPoint">
+    <xsd:annotation>
+      <xsd:documentation>A geospatial location, that defines a geographic coordinate</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="scsbase:Location">
+        <xsd:attribute name="longitude" type="xsd:double"/>
+        <xsd:attribute name="latitude" type="xsd:double"/>
+        <xsd:attribute name="elevationMASL" type="xsd:double"/>
+        <xsd:attribute name="elevationSurface" type="xsd:double"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="LocationPoint" type="scsbase:LocationPoint">
+    <xsd:annotation>
+      <xsd:documentation>A geospatial location, that defines a geographic coordinate</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="Address">
+    <xsd:annotation>
+      <xsd:documentation>A typical and ordinary street address</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="scsbase:Location">
+        <xsd:attribute name="country" type="xsd:string"/>
+        <xsd:attribute name="region" type="xsd:string"/>
+        <xsd:attribute name="state" type="xsd:string"/>
+        <xsd:attribute name="city" type="xsd:string"/>
+        <xsd:attribute name="zip" type="xsd:string"/>
+        <xsd:attribute name="street" type="xsd:string"/>
+        <xsd:attribute name="number" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="Address" type="scsbase:Address">
+    <xsd:annotation>
+      <xsd:documentation>A typical and ordinary street address</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="LocationNetwork">
+    <xsd:annotation>
+      <xsd:documentation>A location within a TCP/IP network</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="scsbase:Location">
+        <xsd:attribute name="ipAddress" type="xsd:string"/>
+        <xsd:attribute name="dnsSuffix" type="xsd:string"/>
+        <xsd:attribute name="hostname" type="xsd:string"/>
+        <xsd:attribute name="protocol" type="xsd:string"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="LocationNetwork" type="scsbase:LocationNetwork">
+    <xsd:annotation>
+      <xsd:documentation>A location within a TCP/IP network</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType abstract="true" name="DeviceStatus">
+    <xsd:annotation>
+      <xsd:documentation>A general status of the device. This is a marker interface</xsd:documentation>
+    </xsd:annotation>
+  </xsd:complexType>
+  <xsd:complexType name="DeviceAlarm">
+    <xsd:annotation>
+      <xsd:documentation>An alarm like status. This is a marker interface. This can be used for alarm notifications</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="scsbase:DeviceStatus"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DeviceAlarm" type="scsbase:DeviceAlarm">
+    <xsd:annotation>
+      <xsd:documentation>An alarm like status. This is a marker interface. This can be used for alarm notifications</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="DiagnosticStatus">
+    <xsd:annotation>
+      <xsd:documentation>A diagnostic status of the device. This is a marker interface for device like status information like ONLINE, OFFLINE, CONNECTION ERROR.</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexContent>
+      <xsd:extension base="scsbase:DeviceStatus"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+  <xsd:element name="DiagnosticStatus" type="scsbase:DiagnosticStatus">
+    <xsd:annotation>
+      <xsd:documentation>A diagnostic status of the device. This is a marker interface for device like status information like ONLINE, OFFLINE, CONNECTION ERROR.</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType abstract="true" name="Capability">
+    <xsd:annotation>
+      <xsd:documentation>Capabilities are enum like tags that define features, a device can handle</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="literal" type="xsd:string"/>
+    <xsd:attribute name="name" type="xsd:string"/>
+    <xsd:attribute name="description" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:complexType name="DeviceInfo">
+    <xsd:annotation>
+      <xsd:documentation>A information object for vendor like information about the device</xsd:documentation>
+    </xsd:annotation>
+    <xsd:attribute name="deviceType" type="scsbase:DeviceType"/>
+    <xsd:attribute name="manufacturer" type="xsd:string"/>
+    <xsd:attribute name="designation" type="xsd:string"/>
+    <xsd:attribute name="version" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:element name="DeviceInfo" type="scsbase:DeviceInfo">
+    <xsd:annotation>
+      <xsd:documentation>A information object for vendor like information about the device</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+  <xsd:complexType name="DataObject">
+    <xsd:attribute name="id" type="xsd:string"/>
+    <xsd:attribute name="deviceId" type="xsd:string"/>
+    <xsd:attribute name="configId" type="xsd:string"/>
+    <xsd:attribute name="deviceTimestamp" type="xsd:string"/>
+    <xsd:attribute name="deviceIndex" type="xsd:long"/>
+    <xsd:attribute name="localTimestamp" type="xsd:string"/>
+    <xsd:attribute name="localIndex" type="xsd:long"/>
+  </xsd:complexType>
+  <xsd:element name="DataObject" type="scsbase:DataObject"/>
+  <xsd:complexType name="DataArchive">
+    <xsd:sequence>
+      <xsd:element maxOccurs="unbounded" minOccurs="0" name="dataObject" type="scsbase:DataObject"/>
+    </xsd:sequence>
+    <xsd:attribute name="id" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:element name="DataArchive" type="scsbase:DataArchive"/>
+  <xsd:complexType name="DeviceConfigurationArchive">
+    <xsd:attribute name="configurations" type="xsd:string"/>
+  </xsd:complexType>
+  <xsd:element name="DeviceConfigurationArchive" type="scsbase:DeviceConfigurationArchive"/>
+</xsd:schema>

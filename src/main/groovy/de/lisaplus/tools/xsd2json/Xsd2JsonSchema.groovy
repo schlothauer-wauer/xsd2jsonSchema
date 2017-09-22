@@ -3,6 +3,9 @@ package de.lisaplus.tools.xsd2json
 import com.beust.jcommander.JCommander
 import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
@@ -13,8 +16,12 @@ class Xsd2JsonSchema {
     @Parameter(names = [ '-x', '--xsd' ], description = "Path to XSD schema to parse", required = true)
     String model
 
-    @Parameter(names = [ '-o', '--output' ], description = "Name of the output file", required = true)
-    String outputName
+    @Parameter(names = [ '-o', '--output' ], description = "Path to the output file", required = true)
+    String outputFilePath
+
+    @Parameter(names = [ '-e', '--entryType' ], description = "What is the entry type for the modell", required = true)
+    String entryType
+
 
     @Parameter(names = ['-h','--help'], help = true)
     boolean help = false
@@ -52,12 +59,27 @@ class Xsd2JsonSchema {
             throw new Exception(errorMsg)
         }
         log.info("xsd=${model}")
-        log.info("outPutBase=${outputName}")
+        log.info("outPutBase=${outputFilePath}")
         def xjcCommandString = getXjcCommandString()
         def javacCommandString = getJavacCommandString()
         def classFileBasePath = generateJavaClassesFromXsd(xjcCommandString)
         def generatedClassPath = compileGenerated(classFileBasePath,javacCommandString)
+        final GroovyClassLoader classLoader = new GroovyClassLoader()
+        classLoader.addClasspath(generatedClassPath)
+        classToSchema(classLoader,entryType,outputFilePath)
     }
+
+    private static void classToSchema(def classLoader, def className, def outputFilePath) {
+        Class c = classLoader.loadClass(className)
+        ObjectMapper mapper = new ObjectMapper()
+        JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper,false)
+        JsonNode schema = schemaGen.generateJsonSchema(c);
+        def objectMapper = new ObjectMapper()
+        String s = objectMapper.writeValueAsString(schema)
+        def outputFile = new File(outputFilePath)
+        outputFile.write(s)
+    }
+
 
     static String getCommandString(def commandStr,def msgPrefix) {
         def command = [commandStr,'-version']
