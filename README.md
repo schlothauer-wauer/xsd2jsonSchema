@@ -1,4 +1,4 @@
-# xsd2jsonSchema
+# jsonCodeGen
 A simple Groovy based program to do convert XSD definitions to JSON schema.
 
 This tool is in a terrible early state
