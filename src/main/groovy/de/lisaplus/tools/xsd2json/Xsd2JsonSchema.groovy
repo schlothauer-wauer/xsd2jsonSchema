@@ -94,7 +94,7 @@ class Xsd2JsonSchema {
             log.info ("${msgPrefix} in searchPath")
             String javaHomePath = System.getenv('JAVA_HOME')
             if (javaHomePath) {
-                commandStr = javaHomePath+'/'+commandStr
+                commandStr = javaHomePath+'/bin/'+commandStr
                 command = [commandStr,'-version']
                 try {
                     def process = new ProcessBuilder(command)
