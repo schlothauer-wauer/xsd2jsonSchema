@@ -134,16 +134,6 @@ class Xsd2JsonSchema {
         File f = File.createTempDir()
         String pathToGenerate = f.getCanonicalPath()
         log.info ("create Java classes from XSD here: "+pathToGenerate)
-        // v1
-        // def command = [xjcCommand,'-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
-
-        // v2
-        /*
-        def mFile = new File(model);
-        def modelURL = mFile.toURI().toURL();
-        def command = [xjcCommand,'-nv','-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,modelURL]
-         */
-        // v3
         def command = [xjcCommand,'-nv','-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
         println "executing command ${command.join(' ')}"
         def process = new ProcessBuilder(command).start()
