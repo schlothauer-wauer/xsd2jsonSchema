@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -77,7 +78,8 @@ class Xsd2JsonSchema {
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper,false)
         JsonNode schema = schemaGen.generateJsonSchema(c);
         def objectMapper = new ObjectMapper()
-        String s = objectMapper.writeValueAsString(schema)
+        def writer = new ObjectMapper().writer().withFeatures(SerializationFeature.INDENT_OUTPUT)
+        String s = writer.writeValueAsString(schema)
         def outputFile = new File(outputFilePath)
         outputFile.write(s)
         log.info('Done writing JSON schema to {}', outputFile.getAbsolutePath())
