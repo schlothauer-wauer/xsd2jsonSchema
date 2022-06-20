@@ -42,6 +42,8 @@ class Xsd2JsonSchema {
         }
         catch(ParameterException e) {
             e.usage()
+        } catch(Exception e) {
+            e.printStackTrace()
         }
         
     }
@@ -78,6 +80,7 @@ class Xsd2JsonSchema {
         String s = objectMapper.writeValueAsString(schema)
         def outputFile = new File(outputFilePath)
         outputFile.write(s)
+        log.info('Done writing JSON schema to {}', outputFile.getAbsolutePath())
     }
 
 
@@ -131,10 +134,22 @@ class Xsd2JsonSchema {
         File f = File.createTempDir()
         String pathToGenerate = f.getCanonicalPath()
         log.info ("create Java classes from XSD here: "+pathToGenerate)
-        def command = [xjcCommand,'-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
-        def process = new ProcessBuilder(command)
-                .redirectErrorStream(true)
-                .start()
+        // v1
+        // def command = [xjcCommand,'-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
+
+        // v2
+        /*
+        def mFile = new File(model);
+        def modelURL = mFile.toURI().toURL();
+        def command = [xjcCommand,'-nv','-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,modelURL]
+         */
+        // v3
+        def command = [xjcCommand,'-nv','-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
+        println "executing command ${command.join(' ')}"
+        def process = new ProcessBuilder(command).start()
+        process.errorStream.eachLine {
+            log.error(it)
+        }
         process.inputStream.eachLine {
             log.info(it)
         }
@@ -144,6 +159,7 @@ class Xsd2JsonSchema {
             log.error(errorMsg)
             throw new Exception(errorMsg)
         }
+        log.info('Done writing Java classes to {}', f.getCanonicalPath())
         return f.getCanonicalPath()
     }
 
@@ -153,9 +169,12 @@ class Xsd2JsonSchema {
         log.info("class path for compiled Java stuff: $pathToGenerate")
         def command = [javacCommand,'-d',f.getCanonicalPath(),'-source','1.8']
 
-        File src = new File(sourceFileDir).eachFile { file ->
+        def src = new File(sourceFileDir)
+        src.eachFile { file ->
             command.add(file.getCanonicalPath())
         }
+
+        println "executing command ${command.join(' ')}"
 
         def process = new ProcessBuilder(command)
                 .redirectErrorStream(true)
@@ -169,6 +188,7 @@ class Xsd2JsonSchema {
             log.error(errorMsg)
             throw new Exception(errorMsg)
         }
+        log.info('Done compiling Java classes from {}', src.getCanonicalPath())
         return pathToGenerate
     }
 
