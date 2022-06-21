@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter
 import com.beust.jcommander.ParameterException
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -42,6 +43,8 @@ class Xsd2JsonSchema {
         }
         catch(ParameterException e) {
             e.usage()
+        } catch(Exception e) {
+            e.printStackTrace()
         }
         
     }
@@ -75,9 +78,11 @@ class Xsd2JsonSchema {
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper,false)
         JsonNode schema = schemaGen.generateJsonSchema(c);
         def objectMapper = new ObjectMapper()
-        String s = objectMapper.writeValueAsString(schema)
+        def writer = new ObjectMapper().writer().withFeatures(SerializationFeature.INDENT_OUTPUT)
+        String s = writer.writeValueAsString(schema)
         def outputFile = new File(outputFilePath)
         outputFile.write(s)
+        log.info('Done writing JSON schema to {}', outputFile.getAbsolutePath())
     }
 
 
@@ -94,7 +99,7 @@ class Xsd2JsonSchema {
             log.info ("${msgPrefix} in searchPath")
             String javaHomePath = System.getenv('JAVA_HOME')
             if (javaHomePath) {
-                commandStr = javaHomePath+'/'+commandStr
+                commandStr = javaHomePath+'/bin/'+commandStr
                 command = [commandStr,'-version']
                 try {
                     def process = new ProcessBuilder(command)
@@ -131,10 +136,12 @@ class Xsd2JsonSchema {
         File f = File.createTempDir()
         String pathToGenerate = f.getCanonicalPath()
         log.info ("create Java classes from XSD here: "+pathToGenerate)
-        def command = [xjcCommand,'-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
-        def process = new ProcessBuilder(command)
-                .redirectErrorStream(true)
-                .start()
+        def command = [xjcCommand,'-nv','-npa','-p','','-d',f.getCanonicalPath(),pathToGenerate,model]
+        println "executing command ${command.join(' ')}"
+        def process = new ProcessBuilder(command).start()
+        process.errorStream.eachLine {
+            log.error(it)
+        }
         process.inputStream.eachLine {
             log.info(it)
         }
@@ -144,6 +151,7 @@ class Xsd2JsonSchema {
             log.error(errorMsg)
             throw new Exception(errorMsg)
         }
+        log.info('Done writing Java classes to {}', f.getCanonicalPath())
         return f.getCanonicalPath()
     }
 
@@ -153,9 +161,12 @@ class Xsd2JsonSchema {
         log.info("class path for compiled Java stuff: $pathToGenerate")
         def command = [javacCommand,'-d',f.getCanonicalPath(),'-source','1.8']
 
-        File src = new File(sourceFileDir).eachFile { file ->
+        def src = new File(sourceFileDir)
+        src.eachFile { file ->
             command.add(file.getCanonicalPath())
         }
+
+        println "executing command ${command.join(' ')}"
 
         def process = new ProcessBuilder(command)
                 .redirectErrorStream(true)
@@ -169,6 +180,7 @@ class Xsd2JsonSchema {
             log.error(errorMsg)
             throw new Exception(errorMsg)
         }
+        log.info('Done compiling Java classes from {}', src.getCanonicalPath())
         return pathToGenerate
     }
 
